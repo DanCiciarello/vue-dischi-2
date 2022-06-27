@@ -11,9 +11,9 @@
 
                     <!-- Input select -->
                     <div class="input-group">
-                        <select class="form-select" @click="getMusicGenres" v-model="genreSelected">
+                        <select class="form-select" v-model="genreSelected">
                             <option>All</option>
-                            <option v-for="genre in genresList" :key="genre">{{genre}}</option>
+                            <option v-for="genre in state.genresList" :key="genre">{{genre}}</option>
                         </select>
                         <div class="input-group-append">
                             <button class="btn btn-outline-light" type="button" @click="onChangeGenre">Filtra</button>
@@ -29,9 +29,9 @@
 
                     <!-- Input select -->
                     <div class="input-group">
-                        <select class="form-select" @click="getArtistsList" v-model="artistSelected">
+                        <select class="form-select" v-model="artistSelected">
                             <option>All</option>
-                            <option v-for="artist in artistsList" :key="artist">{{artist}}</option>
+                            <option v-for="artist in state.artistsList" :key="artist">{{artist}}</option>
                         </select>
                         <div class="input-group-append">
                             <button class="btn btn-outline-light" type="button" @click="onChangeArtist">Filtra</button>
@@ -49,46 +49,31 @@
 <!-- --------------------------------------------------------------------------- -->
 
 <script>
+
+import {state} from "../store";
+
 export default {
     name: "FilterList",
 
     data(){
         return {
-            genresList: [],
             genreSelected: "All",
-            artistsList: [],
-            artistSelected: "All"
+            artistSelected: "All",
         }
     },
 
-    props: {
-        disksArray: Array,
+    computed: {
+        state(){
+            return state
+        }
     },
 
     methods: {
-        getMusicGenres(){
-            this.genresList = [];
-            this.disksArray.forEach((disk) => {
-                if(!this.genresList.includes(disk.genre)) {
-                    this.genresList.push(disk.genre);
-                }
-            }
-            )
-        },
-        getArtistsList(){
-            this.artistsList = [];
-            this.disksArray.forEach((disk) => {
-                if(!this.artistsList.includes(disk.author)) {
-                    this.artistsList.push(disk.author);
-                }
-            }
-            )
-        },
         onChangeGenre(){
-            this.$emit("changeGenre", this.genreSelected);
+            state.genreSelected = this.genreSelected;
         },
         onChangeArtist(){
-            this.$emit("changeArtist", this.artistSelected);
+            state.artistSelected = this.artistSelected;
         }
     }
 

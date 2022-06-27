@@ -3,7 +3,7 @@
         <div class="container">
 
             <!-- Sezione filtri -->
-            <FilterList :disks-array="disksArray" @changeGenre="onChangeGenre" @changeArtist="onChangeArtist" />
+            <FilterList/>
 
             <!-- Lista dischi -->
             <div class="row row-cols-5 gx-5 gy-4 mt-3">
@@ -15,7 +15,7 @@
 
             </div>
 
-            <div v-if="getDisksFiltered.length == 0">
+            <div v-if="getDisksFiltered.length === 0">
                 <div class="alert alert-danger" role="alert">
                     Mi spiace, non ci sono risultati con i filtri selezionati!
                 </div>
@@ -32,44 +32,42 @@
 import axios from "axios";
 import DiskItem from "./DiskItem.vue";
 import FilterList from "./FilterList.vue";
+import {state} from "../store";
 
 export default {
     name: "DisksList",
     data() {
         return {
             apiUrl: "https://flynn.boolean.careers/exercises/api/array/music",
-            disksArray: null,
-            genresList: [],
-            genreSelected: "All",
-            artistSelected: "All"
+            disksArray: [],
         };
     },
     computed: {
         getDisksFiltered(){
             // Se è selezionato All
-            if(this.genreSelected === "All" && this.artistSelected === "All"){
+            if(state.genreSelected === "All" && state.artistSelected === "All"){
                 // Ritorno l'array completo
                 return this.disksArray;
             } 
             // Se selezionato un genere
-            else if(this.genreSelected !== "All" && this.artistSelected === "All") {
+            else if(state.genreSelected !== "All" && state.artistSelected === "All") {
                 // Filtro l'array originale per genere
                 return this.disksArray.filter(disk => {
-                    return disk.genre.includes(this.genreSelected);
+                    return disk.genre.includes(state.genreSelected);
                 })
             } 
             // Se selezionato un artista
-            else if(this.genreSelected === "All" && this.artistSelected !== "All") {
+            else if(state.genreSelected === "All" && state.artistSelected !== "All") {
                 // Filtro l'array originale per artista
                 return this.disksArray.filter(disk => {
-                    return disk.author.includes(this.artistSelected);
+                    return disk.author.includes(state.artistSelected);
                 })
             } 
             // Se selezionati entrambi
             else {
                 // Filtro l'array originale per genere e artista
                 return this.disksArray.filter(disk => {
-                    return disk.genre.includes(this.genreSelected) && disk.author.includes(this.artistSelected);
+                    return disk.genre.includes(state.genreSelected) && disk.author.includes(state.artistSelected);
                 })
 
             }
@@ -82,14 +80,28 @@ export default {
                 .get(this.apiUrl)
                 .then((result) => {
                     this.disksArray = result.data.response;
+                    this.getMusicGenres();
+                    this.getArtistsList();
             });
         },
-        onChangeGenre(genreSelected){
-            this.genreSelected = genreSelected;
+        getMusicGenres(){
+            state.genresList = [];
+            this.disksArray.forEach((disk) => {
+                if(!state.genresList.includes(disk.genre)) {
+                    state.genresList.push(disk.genre);
+                }
+            }
+            )
         },
-        onChangeArtist(artistSelected){
-            this.artistSelected = artistSelected;
-        }
+        getArtistsList(){
+            state.artistsList = [];
+            this.disksArray.forEach((disk) => {
+                if(!state.artistsList.includes(disk.author)) {
+                    state.artistsList.push(disk.author);
+                }
+            }
+            )
+        },
     },
     mounted() {
         this.fetchDisksList();
