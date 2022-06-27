@@ -1,28 +1,40 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+
+    <TheHeader />
+
+    <DisksList />
+
   </div>
 </template>
 
+<!-- --------------------------------------------------------------------------- -->
+
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+
+import TheHeader from "./components/TheHeader.vue";
+import DisksList from "./components/DisksList.vue";
 
 export default {
   name: 'App',
+
   components: {
-    HelloWorld
-  }
+    TheHeader,
+    DisksList,
+  },
+
 }
 </script>
 
+<!-- --------------------------------------------------------------------------- -->
+
 <style lang="scss">
+
+// Importo il file main di scss
+@import "./assets/scss/main.scss";
+
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
 }
 </style>
